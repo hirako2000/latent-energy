@@ -108,25 +108,47 @@ def resolve(
     hints = sample["hints"].unsqueeze(0).to(device)
     target_grid = sample["target_grid"].unsqueeze(0).to(device)
     
+    # actual puzzle size from hints
+    row_hints = hints[0, 0]  # [12, max_hint_len]
+    col_hints = hints[0, 1]  # [12, max_hint_len]
+    
+    # Find rows/cols with non-zero hints
+    rows_with_hints = torch.where(row_hints.sum(dim=1) > 0)[0]
+    cols_with_hints = torch.where(col_hints.sum(dim=1) > 0)[0]
+    
+    if len(rows_with_hints) > 0 and len(cols_with_hints) > 0:
+        actual_rows = rows_with_hints[-1].item() + 1
+        actual_cols = cols_with_hints[-1].item() + 1
+        puzzle_size = max(actual_rows, actual_cols)
+    else:
+        puzzle_size = 12  # Default would be max
+    
+    console.print(f"[dim]Puzzle size: {puzzle_size}x{puzzle_size}[/dim]")
+    
     energy_fn.set_context(hints)
     resolved = solver.resolve(init_state, hints)
     
     final_grid = (torch.sigmoid(resolved * 6.0) > 0.5).int().squeeze().cpu().numpy()
     target_grid_np = target_grid.int().squeeze().cpu().numpy()
     
+    # only the relevant puzzle area
+    final_grid_display = final_grid[:puzzle_size, :puzzle_size]
+    target_grid_display = target_grid_np[:puzzle_size, :puzzle_size]
+    
     console.print("\n[bold green]Equilibrium Reached:[/bold green]")
-    console.print("[dim]Model Output:[/dim]")
-    for row in final_grid:
+    console.print(f"[dim]Model Output ({puzzle_size}x{puzzle_size}):[/dim]")
+    for row in final_grid_display:
         row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
         console.print(f"  {row_str}")
     
     if compare:
-        console.print("\n[dim]True Solution:[/dim]")
-        for row in target_grid_np:
+        console.print(f"\n[dim]True Solution ({puzzle_size}x{puzzle_size}):[/dim]")
+        for row in target_grid_display:
             row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
             console.print(f"  {row_str}")
         
-        accuracy = (final_grid == target_grid_np).mean()
+        # accuracy on the actual puzzle area
+        accuracy = (final_grid_display == target_grid_display).mean()
         logic_err = energy_fn.check_logic(resolved, hints)
         
         console.print(f"\n[bold]Metrics:[/bold]")
