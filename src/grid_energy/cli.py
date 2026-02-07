@@ -59,11 +59,13 @@ def train(
 @app.command()
 def resolve(
     puzzle_id: Annotated[str, typer.Option(help="Specific puzzle ID")] = "",
-    steps: int = typer.Option(100, help="Number of kinetic vibration steps"),
+    steps: int = typer.Option(150, help="Number of kinetic vibration steps"),
+    compare: bool = typer.Option(True, help="Compare with true solution"),
 ):
     """Execute Kinetic Resolution. Picks random if no ID is provided."""
     import torch
     import random
+    import numpy as np
     from grid_energy.data.loader import CroissantDataset
     from grid_energy.core.models import NonogramCNN
     from grid_energy.core.energy import NonogramEnergy
@@ -88,11 +90,11 @@ def resolve(
             return
 
     model = NonogramCNN(grid_size=12).to(device)
-    weights_path = settings.ROOT_DIR / "data/models/ebm_weights.pt"
+    weights_path = settings.ROOT_DIR / "data/models/ebm_final.pt"
     
     if weights_path.exists():
         model.load_state_dict(torch.load(weights_path, map_location=device, weights_only=True))
-        console.print("[dim]Loaded pre-trained kinetic weights.[/dim]")
+        console.print("[dim]Loaded trained EBM weights.[/dim]")
     else:
         console.print("[yellow]Warning: No weights found. Running with raw physics.[/yellow]")
 
@@ -102,22 +104,46 @@ def resolve(
 
     console.print(f"[bold cyan]Resolving {puzzle_id}...[/bold cyan]")
     
-    # start from noise or a blank slate
     init_state = torch.randn((1, 1, 12, 12)).to(device)
     hints = sample["hints"].unsqueeze(0).to(device)
+    target_grid = sample["target_grid"].unsqueeze(0).to(device)
     
-    # solver "vibrates" the grid into equilibrium
-    # prime the energy function with context before solving
     energy_fn.set_context(hints)
     resolved = solver.resolve(init_state, hints)
     
-    # continuous energy state back to binary grid
-    final_grid = (torch.sigmoid(resolved) > 0.5).int().squeeze().cpu().numpy()
+    final_grid = (torch.sigmoid(resolved * 6.0) > 0.5).int().squeeze().cpu().numpy()
+    target_grid_np = target_grid.int().squeeze().cpu().numpy()
     
     console.print("\n[bold green]Equilibrium Reached:[/bold green]")
+    console.print("[dim]Model Output:[/dim]")
     for row in final_grid:
         row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
         console.print(f"  {row_str}")
+    
+    if compare:
+        console.print("\n[dim]True Solution:[/dim]")
+        for row in target_grid_np:
+            row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
+            console.print(f"  {row_str}")
+        
+        accuracy = (final_grid == target_grid_np).mean()
+        logic_err = energy_fn.check_logic(resolved, hints)
+        
+        console.print(f"\n[bold]Metrics:[/bold]")
+        console.print(f"  Pixel Accuracy: {accuracy:.2%}")
+        console.print(f"  Logic Error: {logic_err:.2f}")
+        
+        if logic_err < 0.1:
+            console.print("[green]✓ Constraints satisfied[/green]")
+        else:
+            console.print("[red]✗ Constraints violated[/red]")
+        
+        if accuracy > 0.95:
+            console.print("[green]✓ Solution matches[/green]")
+        elif accuracy > 0.8:
+            console.print("[yellow]~ Partial match[/yellow]")
+        else:
+            console.print("[red]✗ Solution differs[/red]")
 
 @app.command()
 def diagnose(puzzle_id: str):

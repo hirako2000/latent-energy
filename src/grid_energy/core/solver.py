@@ -1,7 +1,7 @@
 import torch
 
 class KineticSolver:
-    def __init__(self, energy_fn: torch.nn.Module, step_size: float = 0.02, n_steps: int = 30):
+    def __init__(self, energy_fn: torch.nn.Module, step_size: float = 0.03, n_steps: int = 300):
         self.energy_fn = energy_fn
         self.step_size = step_size
         self.n_steps = n_steps
@@ -16,8 +16,8 @@ class KineticSolver:
             
             grad = torch.autograd.grad(energy, x)[0]
             
-            noise = torch.randn_like(x) * (0.01 * (1 - i/self.n_steps))
+            noise = torch.randn_like(x) * (0.1 * (1 - i/self.n_steps) ** 2)
             x = x - (self.step_size * grad) + noise
-            x = torch.clamp(x, -1.0, 1.0).detach().requires_grad_(True)
+            x = torch.clamp(x, -2.0, 2.0).detach().requires_grad_(True)
             
         return x

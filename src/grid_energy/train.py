@@ -3,7 +3,6 @@ import torch.optim as optim
 import torch.nn.functional as F
 from rich.live import Live
 from rich.table import Table
-from sklearn.metrics import f1_score
 
 def train_ebm(epochs: int, batch_size: int, lr: float):
     device = torch.device("cuda" if torch.cuda.is_available() else 
@@ -17,22 +16,22 @@ def train_ebm(epochs: int, batch_size: int, lr: float):
     backbone = NonogramCNN(grid_size=12).to(device)
     energy_fn = NonogramEnergy(backbone).to(device)
     
-    train_solver = KineticSolver(energy_fn, step_size=0.02, n_steps=30)
-    eval_solver = KineticSolver(energy_fn, step_size=0.01, n_steps=80)
-    
-    optimizer = optim.Adam(backbone.parameters(), lr=lr)
+    optimizer = optim.AdamW(backbone.parameters(), lr=lr, weight_decay=1e-5)
     
     loader = get_dataloader(batch_size=batch_size, shuffle=True)
 
     stats_table = Table(title=f"EBM Training ({device})")
     stats_table.add_column("Epoch", justify="center")
     stats_table.add_column("Loss", justify="right", style="cyan")
-    stats_table.add_column("F1", justify="right", style="green")
+    stats_table.add_column("Solution Energy", justify="right", style="green")
+    stats_table.add_column("Noise Energy", justify="right", style="magenta")
     stats_table.add_column("LogicErr", justify="right", style="red")
 
     with Live(stats_table, refresh_per_second=2):
         for epoch in range(epochs):
             epoch_loss = 0.0
+            epoch_sol_energy = 0.0
+            epoch_noise_energy = 0.0
             epoch_logic = 0.0
             total_batches = 0
             
@@ -48,58 +47,47 @@ def train_ebm(epochs: int, batch_size: int, lr: float):
                 
                 optimizer.zero_grad()
                 
-                e_pos = energy_fn(pos_continuous)
+                e_solution = energy_fn(pos_continuous)
                 
-                backbone.eval()
-                with torch.no_grad():
-                    neg_start = torch.randn_like(pos_continuous) * 0.05
-                    neg_grid = train_solver.resolve(neg_start, hints)
+                noise_grid = torch.randn_like(pos_continuous) * 0.3
+                e_noise = energy_fn(noise_grid)
                 
-                backbone.train()
-                e_neg = energy_fn(neg_grid)
+                margin = 1.0
+                loss = F.relu(e_solution - e_noise + margin).mean()
                 
-                loss = F.relu(e_pos - e_neg + 0.5).mean()
+                # push solution energy to be negative
+                reg_loss = F.relu(e_solution + 0.5).mean()
                 
-                loss.backward()
+                total_loss = loss + reg_loss * 0.1
+                total_loss.backward()
                 
                 torch.nn.utils.clip_grad_norm_(backbone.parameters(), 0.5)
                 optimizer.step()
                 
-                logic_err = energy_fn.check_logic(neg_grid, hints)
+                logic_err = energy_fn.check_logic(pos_continuous, hints)
                 
-                epoch_loss += loss.item()
+                epoch_loss += total_loss.item()
+                epoch_sol_energy += e_solution.mean().item()
+                epoch_noise_energy += e_noise.mean().item()
                 epoch_logic += logic_err
                 total_batches += 1
             
-            backbone.eval()
-            with torch.no_grad():
-                eval_batch = next(iter(loader))
-                eval_grid = eval_batch["target_grid"].to(device).float()
-                eval_hints = eval_batch["hints"].to(device)
-                
-                energy_fn.set_context(eval_hints)
-                
-                eval_start = torch.randn_like(eval_grid) * 0.05
-                resolved = eval_solver.resolve(eval_start, eval_hints)
-                
-                binary_res = (torch.sigmoid(resolved * 3.0) > 0.5).float()
-                binary_target = eval_grid
-                
-                f1 = f1_score(
-                    binary_target.cpu().numpy().flatten(),
-                    binary_res.cpu().numpy().flatten(),
-                    zero_division=0
-                )
-                
-                avg_loss = epoch_loss / total_batches
-                avg_logic = epoch_logic / total_batches
-                
-                stats_table.add_row(
-                    f"{epoch+1:02d}",
-                    f"{avg_loss:.3f}",
-                    f"{f1:.4f}",
-                    f"{avg_logic:.3f}"
-                )
+            avg_loss = epoch_loss / total_batches
+            avg_sol_energy = epoch_sol_energy / total_batches
+            avg_noise_energy = epoch_noise_energy / total_batches
+            avg_logic = epoch_logic / total_batches
+            
+            stats_table.add_row(
+                f"{epoch+1:02d}",
+                f"{avg_loss:.3f}",
+                f"{avg_sol_energy:.3f}",
+                f"{avg_noise_energy:.3f}",
+                f"{avg_logic:.3f}"
+            )
+            
+            if epoch > 10 and avg_loss < 0.1 and avg_sol_energy < avg_noise_energy:
+                print(f"\nGood separation. Stopping early.")
+                break
     
-    torch.save(backbone.state_dict(), "data/models/ebm_final.pt")
+    torch.save(backbone.state_dict(), "data/models/ebm_trained.pt")
     print(f"Training complete.")
