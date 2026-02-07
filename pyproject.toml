@@ -1,0 +1,79 @@
+[project]
+name = "grid-energy"
+version = "0.1.0"
+description = "Kinetic Resolution for Logic Systems using Energy-Based Models"
+authors = [{name = "Hirako San", email = "hirako2000@gmail.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.14" 
+dependencies = [
+    "dvc>=3.0.0",
+    "huggingface-hub>=0.20.0",
+    "matplotlib>=3.8.0",
+    "msgspec>=0.18.0",
+    "numpy>=1.26.0",
+    "pandas>=2.1.0",
+    "pyarrow>=14.0.0",
+    "python-dotenv>=1.0.0",
+    "scikit-learn>=1.8.0",
+    "seaborn>=0.13.0",
+    "torch>=2.2.0",
+    "torchebm>=0.5.1",
+    "typer>=0.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipython>=8.20.0",
+    "pre-commit>=3.6.0",
+    "pyright>=1.1.350",
+    "pytest>=8.0.0",
+    "pytest-benchmark>=4.0.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.2.0",
+]
+
+[project.scripts]
+grid-energy = "grid_energy.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/grid_energy"]
+
+[tool.uv]
+package = true
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "strict"
+include = ["src", "tests"]
+reportMissingTypeStubs = false
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "F",   # Pyflakes
+    "I",   # isort
+    "E",   # Pycodestyle Errors
+    "W",   # Pycodestyle Warnings
+    "B",   # flake8-bugbear
+    "S",   # Bandit (Security)
+    "PL",  # Pylint
+    "C4",  # Comprehensions
+    "C90", # McCabe complexity
+    "TID", # Tidy imports
+]
+ignore = ["E501"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -v --cov=src/grid_energy --cov-report=term-missing"
