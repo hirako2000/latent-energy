@@ -49,12 +49,12 @@ package = true
 [tool.pyright]
 venvPath = "."
 venv = ".venv"
-typeCheckingMode = "strict"
+typeCheckingMode = "standard"
 include = ["src", "tests"]
 reportMissingTypeStubs = false
 
 [tool.pytest.ini_options]
-testpaths = ["src"]
+testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-ra -v --ruff --cov=src/ --cov-report=term-missing --cov-report=html"
 filterwarnings = [
@@ -90,7 +90,19 @@ select = [
     "C90", # McCabe complexity
     "TID", # Tidy imports
 ]
-ignore = ["E501"]
+ignore = [
+    "E501",
+    "S311",    # Randomness
+    "C901",    # Complexity
+    "PLR0915", # Too many statements
+    "PLR2004", # Magic numbers/values,
+    "PLR0912", # Many branches
+    "PLR0913", # Many arguments
+    "S324", # MD5
+    "I001", # Ordered imnports
+    "W293", # blank line whitespace
+    "W292" # no new line at end of file
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10

@@ -14,7 +14,7 @@ coverage.json
 
 # data
 VGRP-Bench/
-data/
+/data/
 
 # Viz
 visualizations
