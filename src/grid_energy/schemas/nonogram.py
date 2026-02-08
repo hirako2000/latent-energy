@@ -1,5 +1,7 @@
-import msgspec
 from typing import List
+
+import msgspec
+
 
 class NonogramHints(msgspec.Struct):
     row_hints: List[List[int]]
@@ -7,7 +9,7 @@ class NonogramHints(msgspec.Struct):
 
 class NonogramPuzzle(msgspec.Struct, rename="lower"):
     size: int
-    initialization: List[List[str]] 
+    initialization: List[List[str]]
     solution: List[List[str]]
     hints: NonogramHints
     id: str = "unknown"

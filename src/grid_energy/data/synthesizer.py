@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import json
 from pathlib import Path
+from typing import Any, cast
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -14,8 +15,10 @@ from grid_energy.utils.config import settings
 console = Console()
 
 def to_list(val):
-    if val is None: return []
-    if isinstance(val, np.ndarray): return val.tolist()
+    if val is None:
+        return []
+    if isinstance(val, np.ndarray):
+        return val.tolist()
     return list(val)
 
 def synthesize_gold():
@@ -47,7 +50,7 @@ def synthesize_gold():
         progress.advance(load_task, len(silver_files))
         
         analyze_task = progress.add_task("Analyzing dimensions...", total=1)
-        max_grid = int(df['size'].max())
+        max_grid = int(df['size'].max()) # type: ignore
         max_hint_len = 0
         for h in df['hints']:
             all_h = to_list(h.get('row_hints', [])) + to_list(h.get('col_hints', []))
@@ -65,7 +68,7 @@ def synthesize_gold():
 
         for i, row in df.iterrows():
             sol = row['solution']
-            curr_size = int(row['size'])
+            curr_size = int(row['size']) # type: ignore
             
             if curr_size <= 5:
                 size_key = "5x5"
@@ -82,8 +85,8 @@ def synthesize_gold():
             total_cells = 0
             for r_idx, grid_row in enumerate(sol[:curr_size]):
                 for c_idx, cell in enumerate(grid_row[:curr_size]):
-                    if str(cell) == 's': 
-                        grid_tensors[i, r_idx, c_idx] = 1
+                    if str(cell) == 's':
+                        grid_tensors[i, r_idx, c_idx] = 1 # type: ignore
                         filled_cells += 1
                     total_cells += 1
             
@@ -91,14 +94,14 @@ def synthesize_gold():
                 fill_rate = filled_cells / total_cells
                 fill_rates_by_size[size_key].append(fill_rate)
             
-            h_dict = row['hints']
+            h_dict = cast(Any, row['hints'])
             
             row_hint_lists = to_list(h_dict.get('row_hints', []))[:curr_size]
             for r_idx, h_list in enumerate(row_hint_lists):
                 if isinstance(h_list, (list, np.ndarray)):
                     clean_h = [v for v in h_list if v > 0]
                     if clean_h:
-                        row_hints[i, r_idx, :len(clean_h)] = clean_h
+                        row_hints[i, r_idx, :len(clean_h)] = clean_h # type: ignore
                         hint_lengths_by_size[size_key].append(len(clean_h))
                         hint_values_by_size[size_key].extend(clean_h)
             
@@ -107,7 +110,7 @@ def synthesize_gold():
                 if isinstance(h_list, (list, np.ndarray)):
                     clean_h = [v for v in h_list if v > 0]
                     if clean_h:
-                        col_hints[i, c_idx, :len(clean_h)] = clean_h
+                        col_hints[i, c_idx, :len(clean_h)] = clean_h # type: ignore
                         hint_lengths_by_size[size_key].append(len(clean_h))
                         hint_values_by_size[size_key].extend(clean_h)
             
@@ -128,10 +131,10 @@ def synthesize_gold():
             "grids": torch.from_numpy(grid_tensors),
             "row_hints": torch.from_numpy(row_hints),
             "col_hints": torch.from_numpy(col_hints),
-            "ids": cleaned_ids, 
+            "ids": cleaned_ids,
             "metadata": {
-                "max_grid_size": max_grid, 
-                "max_hint_len": max_hint_len, 
+                "max_grid_size": max_grid,
+                "max_hint_len": max_hint_len,
                 "samples": num_samples,
                 "size_distribution": size_stats,
             }
@@ -144,11 +147,11 @@ def synthesize_gold():
     generate_gold_heatmap(grid_tensors)
     
     generate_gold_metrics_and_visualizations(
-        grid_tensors, size_stats, fill_rates_by_size, 
+        grid_tensors, size_stats, fill_rates_by_size,
         hint_lengths_by_size, hint_values_by_size, complexities_by_size
     )
     
-    console.print(f"\n[bold green]✓ Gold Layer Synthesized![/bold green]")
+    console.print("\n[bold green]✓ Gold Layer Synthesized![/bold green]")
     
     verify_croissant(data=gold_data)
 
@@ -157,10 +160,10 @@ def generate_gold_heatmap(grids: np.ndarray):
     docs_dir = settings.ROOT_DIR / "docs"
     docs_dir.mkdir(parents=True, exist_ok=True)
     
-    density = np.mean(grids, axis=0) 
+    density = np.mean(grids, axis=0)
     global_fill_rate = np.mean(grids)
     
-    p = np.clip(density, 1e-9, 1-1e-9) 
+    p = np.clip(density, 1e-9, 1-1e-9)
     entropy_map = -(p * np.log2(p) + (1-p) * np.log2(1-p))
     avg_entropy = np.mean(entropy_map)
 
@@ -181,8 +184,8 @@ def generate_gold_heatmap(grids: np.ndarray):
     plt.savefig(docs_dir / "gold_occupancy_heatmap.png")
     plt.close()
 
-def generate_gold_metrics_and_visualizations(grids: np.ndarray, size_stats: dict, 
-                                           fill_rates: dict, hint_lengths: dict, 
+def generate_gold_metrics_and_visualizations(grids: np.ndarray, size_stats: dict,
+                                           fill_rates: dict, hint_lengths: dict,
                                            hint_values: dict, complexities: dict):
     viz_dir = settings.ROOT_DIR / "docs" / "visualizations"
     viz_dir.mkdir(parents=True, exist_ok=True)
@@ -323,16 +326,16 @@ def print_gold_summary_table(metrics: dict):
     info_table.add_row(f"[dim]Total puzzles:[/dim] [bold]{total_puzzles:,}[/bold]")
     info_table.add_row(f"[dim]Global fill rate:[/dim] [bold]{tensor['global_fill_rate']:.2%}[/bold]")
     info_table.add_row(f"[dim]Tensor shape:[/dim] [bold]{tensor['shape']}[/bold]")
-    info_table.add_row(f"[dim]JSON metrics:[/dim] [bold]docs/visualizations/gold_metrics.json[/bold]")
+    info_table.add_row("[dim]JSON metrics:[/dim] [bold]docs/visualizations/gold_metrics.json[/bold]")
     
     console.print("\n")
     console.print(info_table)
 
-def verify_croissant(data: dict = None):
+def verify_croissant(data: dict = None): # type: ignore
     """
     ASCII
     """
-    if data is None:
+    if not data:
         path = settings.GOLD_DIR / "croissant_dataset.pt"
         if not path.exists():
             console.print("[red]Gold tensor not found! Run synthesis first.[/red]")
@@ -353,7 +356,7 @@ def verify_croissant(data: dict = None):
     
     console.print(Panel(
         f"[bold cyan]Verification Sample ID:[/]\n{display_id}",
-        expand=False, 
+        expand=False,
         border_style="cyan",
         highlight=False
     ))
@@ -391,5 +394,5 @@ def verify_croissant(data: dict = None):
         row_str = ""
         for j in range(min(actual_size, 12)):
             row_str += "[bold cyan]█ [/]" if grid[i, j] == 1 else "[dim]· [/]"
-        
+
         console.print(f"{hints_str} │ {row_str}")

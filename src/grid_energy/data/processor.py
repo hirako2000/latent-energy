@@ -17,11 +17,13 @@ from grid_energy.schemas.nonogram import NonogramPuzzle
 console = Console()
 
 def normalize_grid(grid):
-    if not grid or not isinstance(grid, list): return []
+    if not grid or not isinstance(grid, list):
+        return []
     return [[str(cell).replace('*', '0') for cell in row] for row in grid]
 
 def robust_parse_solution(text: str):
-    if not isinstance(text, str): return None
+    if not isinstance(text, str):
+        return None
     
     match = re.search(r"(\{.*\})", text, re.DOTALL)
     if not match:
@@ -31,15 +33,17 @@ def robust_parse_solution(text: str):
     
     try:
         return json.loads(content)
-    except:
+    except Exception:
         try:
             return ast.literal_eval(content)
-        except:
+        except Exception:
             ans_match = re.search(r'"answer":\s*(\[\[.*?\]\])', content, re.DOTALL)
             if ans_match:
                 try:
                     return {"answer": ast.literal_eval(ans_match.group(1))}
-                except: pass
+                except Exception:
+                    console.print("Ouch")
+                    pass
     return None
 
 def process_silver_data():
@@ -106,8 +110,8 @@ def process_silver_data():
                             complexity += sum(hint_list)
                     
                     all_complexities.append({
-                        "size": size, 
-                        "complexity": complexity, 
+                        "size": size,
+                        "complexity": complexity,
                         "subset": subset_name,
                         "size_label": f"{size}x{size}"
                     })
@@ -214,7 +218,7 @@ def generate_silver_pngs_from_metrics(metrics: dict, viz_dir: Path):
             subset = comp_df[comp_df['size_label'] == size_label]
             color = size_colors.get(size_label, '#e15759')
             
-            plt.scatter(subset['size'], subset['complexity'], 
+            plt.scatter(subset['size'], subset['complexity'],
                        color=color, alpha=0.7, s=60,
                        label=size_label, edgecolors='black', linewidth=0.5)
         
@@ -265,4 +269,4 @@ def print_silver_summary(metrics: dict):
     console.print(Panel.fit("[bold cyan]Silver Layer Analysis Complete[/bold cyan]", border_style="cyan"))
     console.print(table)
     console.print(f"\n[dim]Total puzzles processed: {total:,}")
-    console.print(f"[dim]Visualizations saved to: docs/visualizations/[/dim]")
+    console.print("[dim]Visualizations saved to: docs/visualizations/[/dim]")

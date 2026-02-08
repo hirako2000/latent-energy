@@ -33,8 +33,8 @@ class CroissantDataset(Dataset):
 def get_dataloader(batch_size=32, shuffle=True):
     dataset = CroissantDataset()
     return DataLoader(
-        dataset, 
-        batch_size=batch_size, 
+        dataset,
+        batch_size=batch_size,
         shuffle=shuffle,
         num_workers=0 # would be >0 for production, 0 is safer for debugging
     )
