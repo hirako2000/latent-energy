@@ -13,6 +13,7 @@ dependencies = [
     "msgspec>=0.18.0",
     "numpy>=1.26.0",
     "pandas>=2.1.0",
+    "plotly>=6.5.2",
     "pyarrow>=14.0.0",
     "python-dotenv>=1.0.0",
     "scikit-learn>=1.8.0",
@@ -26,10 +27,13 @@ dependencies = [
 dev = [
     "ipython>=8.20.0",
     "pre-commit>=3.6.0",
-    "pyright>=1.1.350",
-    "pytest>=8.0.0",
-    "pytest-benchmark>=4.0.0",
-    "pytest-cov>=4.1.0",
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "pytest-mock>=3.15.1",
+    "pytest-asyncio>=1.3.0",
+    "pytest-benchmark>=5.2.3",
+    "pytest-cov>=7.0.0",
+    "pytest-ruff>=0.5",
     "ruff>=0.2.0",
 ]
 
@@ -48,6 +52,26 @@ venv = ".venv"
 typeCheckingMode = "strict"
 include = ["src", "tests"]
 reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["src"]
+python_files = ["test_*.py"]
+addopts = "-ra -v --ruff --cov=src/ --cov-report=term-missing --cov-report=html"
+filterwarnings = [
+    "ignore::DeprecationWarning:torch_geometric.*",
+    "ignore::DeprecationWarning:torch.jit.*",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError"
+]
 
 [tool.ruff]
 line-length = 88
@@ -73,7 +97,3 @@ max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-ra -v --cov=src/grid_energy --cov-report=term-missing"

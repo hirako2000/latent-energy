@@ -1,14 +1,24 @@
 import typer
 import torch
+import random
+import numpy as np
+from grid_energy.data.loader import CroissantDataset
+from grid_energy.core.models import NonogramCNN
+from grid_energy.core.energy import NonogramEnergy
+from grid_energy.core.solver import KineticSolver
+from grid_energy.data.ingestion import fetch_bronze_data
+from grid_energy.data.processor import process_silver_data
+from grid_energy.data.synthesizer import synthesize_gold
+from grid_energy.utils.config import settings
 from typing import Annotated
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-
-from grid_energy.data.ingestion import fetch_bronze_data
-from grid_energy.data.processor import process_silver_data
-from grid_energy.data.synthesizer import synthesize_gold
+import itertools
 import sys
+
+import time
+import hashlib
 
 app = typer.Typer(help="Grid Energy: Structural Integrity for Logic.")
 console = Console()
@@ -18,7 +28,7 @@ def ingest(
     tier: Annotated[str, typer.Argument(help="The Medallion tier to process")] = "bronze"
 ):
     """
-    Execute either Medallion Pipeline stages.
+    Execute Medallion Pipeline stages.
     """
     tier = tier.lower()
     if tier == "bronze":
@@ -42,7 +52,7 @@ def train(
     batch_size: int = typer.Option(16, help="Batch size for training"),
     lr: float = typer.Option(1e-4, help="Learning rate")
 ):
-    """Train the EBM to recognize logical equilibrium (low energy)."""
+    """Train the EBM to recognize logical equilibrium, that is low energy"""
     from grid_energy.train import train_ebm
     
     console.print("[bold yellow]Starting Kinetic Distillation Training...[/bold yellow]")
@@ -60,116 +70,131 @@ def train(
 def resolve(
     puzzle_id: Annotated[str, typer.Option(help="Specific puzzle ID")] = "",
     steps: int = typer.Option(150, help="Number of kinetic vibration steps"),
-    compare: bool = typer.Option(True, help="Compare with true solution"),
+    compare: bool = typer.Option(True, help="Compare with true solution for analysis"),
+    seed: int = typer.Option(42, help="Random seed for reproducibility"),
+    max_retries: int = typer.Option(10, help="Max attempts to find a logical solution"),
 ):
-    """Execute Kinetic Resolution. Picks random if no ID is provided."""
-    import torch
-    import random
-    import numpy as np
-    from grid_energy.data.loader import CroissantDataset
-    from grid_energy.core.models import NonogramCNN
-    from grid_energy.core.energy import NonogramEnergy
-    from grid_energy.core.solver import KineticSolver
-    from grid_energy.utils.config import settings
-
+    """
+    Execute Kinetic Resolution. 
+    Checks success procedurally by truly counting pixel blocks against hints.
+    """
+    
+    torch.manual_seed(seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     ds = CroissantDataset()
     
     if not puzzle_id or puzzle_id.strip() == "":
+        random.seed(seed)
         idx = random.randint(0, len(ds) - 1)
         sample = ds[idx]
         puzzle_id = sample["id"]
-        console.print(f"[dim]No ID provided. Selected random puzzle: [bold]{puzzle_id}[/][/dim]")
+        console.print(f"[dim]No ID provided. Selected: [bold]{puzzle_id}[/][/dim]")
     else:
         try:
             target_idx = ds.ids.index(puzzle_id)
             sample = ds[target_idx]
         except ValueError:
-            console.print(f"[red]Error: Puzzle {puzzle_id} not found in Gold layer.[/red]")
+            console.print(f"[red]Error: Puzzle {puzzle_id} not found.[/red]")
             return
 
     model = NonogramCNN(grid_size=12).to(device)
     weights_path = settings.ROOT_DIR / "data/models/ebm_final.pt"
-    
     if weights_path.exists():
         model.load_state_dict(torch.load(weights_path, map_location=device, weights_only=True))
-        console.print("[dim]Loaded trained EBM weights.[/dim]")
-    else:
-        console.print("[yellow]Warning: No weights found. Running with raw physics.[/yellow]")
-
     model.eval()
-    energy_fn = NonogramEnergy(model=model)
-    solver = KineticSolver(energy_fn, n_steps=steps)
 
-    console.print(f"[bold cyan]Resolving {puzzle_id}...[/bold cyan]")
-    
-    init_state = torch.randn((1, 1, 12, 12)).to(device)
+    energy_fn = NonogramEnergy(model=model)
+    solver = KineticSolver(energy_fn, n_steps=steps, deterministic=True)
+
     hints = sample["hints"].unsqueeze(0).to(device)
     target_grid = sample["target_grid"].unsqueeze(0).to(device)
     
-    # actual puzzle size from hints
-    row_hints = hints[0, 0]  # [12, max_hint_len]
-    col_hints = hints[0, 1]  # [12, max_hint_len]
+    row_hints_raw = hints[0, 0].cpu().numpy()
+    col_hints_raw = hints[0, 1].cpu().numpy()
     
-    # Find rows/cols with non-zero hints
-    rows_with_hints = torch.where(row_hints.sum(dim=1) > 0)[0]
-    cols_with_hints = torch.where(col_hints.sum(dim=1) > 0)[0]
+    # actual puzzle dimensions from non-zero hints
+    active_rows = np.where(row_hints_raw.sum(axis=1) > 0)[0]
+    active_cols = np.where(col_hints_raw.sum(axis=1) > 0)[0]
+    puzzle_size = max(active_rows[-1], active_cols[-1]) + 1 if len(active_rows) > 0 else 12
+
+    # got cleaned hints, no padding
+    clean_row_hints = [[h for h in row if h > 0] for row in row_hints_raw[:puzzle_size]]
+    clean_col_hints = [[h for h in col if h > 0] for col in col_hints_raw[:puzzle_size]]
+
+    def get_procedural_score(grid_tensor):
+        """Counts blocks in the grid and compares them to hints"""
+        binary = (torch.sigmoid(grid_tensor * 6.0) > 0.5).int().squeeze().cpu().numpy()
+        active_area = binary[:puzzle_size, :puzzle_size]
+        
+        total_errors = 0
+        
+        for i, target in enumerate(clean_row_hints):
+            row = active_area[i, :]
+            blocks = [len(list(g)) for k, g in itertools.groupby(row) if k == 1]
+            if blocks != target: total_errors += 1
+            
+        for j, target in enumerate(clean_col_hints):
+            col = active_area[:, j]
+            blocks = [len(list(g)) for k, g in itertools.groupby(col) if k == 1]
+            if blocks != target: total_errors += 1
+            
+        return total_errors
+
+    hash_obj = hashlib.md5(puzzle_id.encode())
+    hash_int = int(hash_obj.hexdigest()[:8], 16)
     
-    if len(rows_with_hints) > 0 and len(cols_with_hints) > 0:
-        actual_rows = rows_with_hints[-1].item() + 1
-        actual_cols = cols_with_hints[-1].item() + 1
-        puzzle_size = max(actual_rows, actual_cols)
-    else:
-        puzzle_size = 12  # Default would be max
-    
-    console.print(f"[dim]Puzzle size: {puzzle_size}x{puzzle_size}[/dim]")
-    
+    best_resolved = None
+    min_errors = 999
+    tries_taken = 0
     energy_fn.set_context(hints)
-    resolved = solver.resolve(init_state, hints)
+
+    if torch.cuda.is_available(): torch.cuda.synchronize()
+    start_time = time.perf_counter()
+
+    for attempt in range(max_retries):
+        tries_taken += 1
+        torch.manual_seed((hash_int + attempt) % (2**32))
+        init_state = torch.randn((1, 1, 12, 12)).to(device)
+        
+        resolved = solver.resolve(init_state, hints)
+        
+        error_count = get_procedural_score(resolved)
+        
+        if error_count < min_errors:
+            min_errors = error_count
+            best_resolved = resolved.clone()
+
+        if error_count == 0:
+            break
+        
+        if attempt < max_retries - 1:
+            console.print(f"  [yellow]Attempt {tries_taken}: Logical Errors in {error_count} lines. Retrying...[/yellow]")
+
+    if torch.cuda.is_available(): torch.cuda.synchronize()
+    total_ms = (time.perf_counter() - start_time) * 1000
+
+    final_grid = (torch.sigmoid(best_resolved * 6.0) > 0.5).int().squeeze().cpu().numpy()
+    final_display = final_grid[:puzzle_size, :puzzle_size]
     
-    final_grid = (torch.sigmoid(resolved * 6.0) > 0.5).int().squeeze().cpu().numpy()
-    target_grid_np = target_grid.int().squeeze().cpu().numpy()
-    
-    # only the relevant puzzle area
-    final_grid_display = final_grid[:puzzle_size, :puzzle_size]
-    target_grid_display = target_grid_np[:puzzle_size, :puzzle_size]
-    
-    console.print("\n[bold green]Equilibrium Reached:[/bold green]")
-    console.print(f"[dim]Model Output ({puzzle_size}x{puzzle_size}):[/dim]")
-    for row in final_grid_display:
-        row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
-        console.print(f"  {row_str}")
-    
+    console.print(f"\n[bold green]Procedural Equilibrium Reached ({puzzle_size}x{puzzle_size}):[/bold green]")
+    for row in final_display:
+        console.print(f"  {''.join(['█ ' if cell == 1 else '· ' for cell in row])}")
+
+    console.print(f"\n[bold]Final Report:[/bold]")
+    console.print(f"  Procedural Status: {'[green]SOLVED[/green]' if min_errors == 0 else f'[red]FAILED ({min_errors} lines wrong)[/red]'}")
+    console.print(f"  Tries Taken: [bold cyan]{tries_taken}[/bold cyan]")
+    console.print(f"  Total Time: [bold magenta]{total_ms:.2f} ms[/bold magenta]")
+
     if compare:
-        console.print(f"\n[dim]True Solution ({puzzle_size}x{puzzle_size}):[/dim]")
-        for row in target_grid_display:
-            row_str = "".join(["█ " if cell == 1 else "· " for cell in row])
-            console.print(f"  {row_str}")
-        
-        # accuracy on the actual puzzle area
-        accuracy = (final_grid_display == target_grid_display).mean()
-        logic_err = energy_fn.check_logic(resolved, hints)
-        
-        console.print(f"\n[bold]Metrics:[/bold]")
-        console.print(f"  Pixel Accuracy: {accuracy:.2%}")
-        console.print(f"  Logic Error: {logic_err:.2f}")
-        
-        if logic_err < 0.1:
-            console.print("[green]✓ Constraints satisfied[/green]")
-        else:
-            console.print("[red]✗ Constraints violated[/red]")
-        
-        if accuracy > 0.95:
-            console.print("[green]✓ Solution matches[/green]")
-        elif accuracy > 0.8:
-            console.print("[yellow]~ Partial match[/yellow]")
-        else:
-            console.print("[red]✗ Solution differs[/red]")
+        target_np = target_grid.int().squeeze().cpu().numpy()[:puzzle_size, :puzzle_size]
+        pixel_acc = (final_display == target_np).mean()
+        console.print(f"  Dataset Match: {pixel_acc:.2%}")
+
+    return best_resolved
 
 @app.command()
 def diagnose(puzzle_id: str):
-    """Compare the Energy levels of truth vs. model output."""
+    """Compare the Energy levels of truth vs. model output"""
     import torch
     from grid_energy.data.loader import CroissantDataset
     from grid_energy.core.models import NonogramCNN
@@ -221,7 +246,7 @@ def diagnose(puzzle_id: str):
 
 @app.command(name="list-ids")
 def list_ids(limit: int = typer.Option(10, help="Number of IDs to show")):
-    """List available puzzle IDs in the Gold dataset."""
+    """List available puzzle IDs off the Gold dataset."""
     from grid_energy.data.loader import CroissantDataset
     
     try:

@@ -1,8 +1,6 @@
-set shell := ["bash", "-c"]
-
-# Display available commands
-help:
-    @just --list
+# Help
+default:
+    just --list
 
 # Install dependencies and setup environment
 setup:
@@ -19,7 +17,7 @@ cli-help:
 inject tier="bronze":
     uv run grid-energy ingest {{tier}}
 
-# Direct aliases for convenience
+# aliases for convenience
 inject-bronze:
     just inject bronze
 
@@ -40,7 +38,7 @@ prepare-gold:
 train:
     uv run grid-energy train --epochs 50
 
-# Resolve a puzzle (random by default, or use id=XYZ)
+# Resolve a puzzle (random by default, or use id=XYZ. eg puzzle_0060)
 resolve id="":
     uv run grid-energy resolve --puzzle-id="{{id}}" --steps 150
 
@@ -53,14 +51,29 @@ list-puzzles:
 
 # --- Linting & Testing ---
 
-# Run the full test suite with coverage
-test:
-    uv run pytest
+# Run all checks
+check: lint analysis test
 
-# Run linting and type checking
+# Fix all auto-fixable linting and formatting issues
+fix:
+    uv run ruff check --fix .
+
+# Check linting and formatting without fixing 
 lint:
     uv run ruff check .
+
+# Run static type analysis
+analysis:
     uv run pyright
+
+# Run the test suite with coverage
+test *args:
+    uv run pytest {{args}} --benchmark-min-rounds=100 -s
+
+# Open the visual coverage report
+coverage:
+    open htmlcov/index.html
+
 
 # Run benchmarks for kinetic resolution
 benchmark:

@@ -46,7 +46,7 @@ def train_ebm(epochs: int, batch_size: int, lr: float, validation_freq: int = 5,
 
     backbone = NonogramCNN(grid_size=12).to(device)
     energy_fn = NonogramEnergy(backbone).to(device)
-    solver = KineticSolver(energy_fn, n_steps=150)
+    solver = KineticSolver(energy_fn, n_steps=150, deterministic=True)
     
     optimizer = optim.AdamW(backbone.parameters(), lr=lr, weight_decay=1e-5)
     
@@ -230,7 +230,7 @@ def validate_model(backbone, energy_fn, solver, val_loader, device):
                 single_target = target_grid[b:b+1]
                 single_hints = hints[b:b+1]
                 
-                # inference!  todo add benchmarking here
+                # inference!  todo add benchmarking
                 init_state = torch.randn_like(single_target) * 0.1
                 energy_fn.set_context(single_hints)
                 resolved = solver.resolve(init_state, single_hints)
@@ -335,7 +335,7 @@ def test_all_puzzles(backbone, energy_fn, solver, device, dataset):
             
             size_results[size_key]["total"] += 1
             
-            # again  inference
+            # again inference
             init_state = torch.randn_like(target_grid) * 0.1
             energy_fn.set_context(hints)
             resolved = solver.resolve(init_state, hints)
@@ -351,7 +351,6 @@ def test_all_puzzles(backbone, energy_fn, solver, device, dataset):
                 size_results[size_key]["correct"] += 1
             else:
                 size_results[size_key]["failed_ids"].append(puzzle_id)
-                # making sure to store failed example for analysis
                 failed_examples.append({
                     "id": puzzle_id,
                     "size": size,
