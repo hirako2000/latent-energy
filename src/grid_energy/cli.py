@@ -5,6 +5,9 @@ import sys
 import time
 from typing import Annotated
 
+import json
+from pathlib import Path
+
 import numpy as np
 import torch
 import typer
@@ -361,7 +364,10 @@ def resolve(
     
     puzzle_size, row_hints_raw, col_hints_raw = calculate_puzzle_size(hints)
     clean_row_hints, clean_col_hints = extract_clean_hints(row_hints_raw, col_hints_raw, puzzle_size)
-    
+    console.print(f"\n[{BOLD_STYLE}]Puzzle Hints:[/{BOLD_STYLE}]")
+    console.print(f"[{DIM_STYLE}]Rows: {[[int(h) for h in row] for row in clean_row_hints]}[/{DIM_STYLE}]")
+    console.print(f"[{DIM_STYLE}]Columns: {[[int(h) for h in col] for col in clean_col_hints]}[/{DIM_STYLE}]")
+
     energy_fn.set_context(hints)
     
     best_resolved, min_errors, tries_taken, total_ms = resolve_puzzle_with_retries(
