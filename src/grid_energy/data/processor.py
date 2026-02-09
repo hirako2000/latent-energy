@@ -16,16 +16,72 @@ from grid_energy.schemas.nonogram import NonogramPuzzle
 
 console = Console()
 
+PARQUET_FILENAME = "test.parquet"
+SILVER_SUFFIX = "_clean.parquet"
+VIZ_DIR_NAME = "visualizations"
+SILVER_METRICS_JSON = "silver_metrics.json"
+
+SMALL_SIZE_MAX = 5
+MEDIUM_SIZE_MAX = 8
+LARGE_SIZE = 12
+SIZE_LABELS = ["5x5", "8x8", "12x12", "other"]
+
+SIZE_COLORS = {
+    "5x5": "#4e79a7",
+    "8x8": "#f28e2c", 
+    "12x12": "#59a14f",
+    "other": "#e15759"
+}
+
+# For Plotting
+FIGURE_SIZE_LARGE = (10, 6)
+FIGURE_SIZE_MEDIUM = (10, 5)
+DPI_HIGH = 150
+FONT_SIZE_TITLE = 14
+FONT_SIZE_AXIS = 12
+FONT_WEIGHT_BOLD = "bold"
+BAR_ANNOTATION_FONT_SIZE = 10
+BINS_COUNT = 15
+ALPHA_GRID = 0.3
+SCATTER_ALPHA = 0.7
+SCATTER_SIZE = 60
+SCATTER_EDGE_WIDTH = 0.5
+HISTPLOT_COLOR = "crimson"
+
+PROGRESS_DESCRIPTION_TRAIN = "[yellow]Refining Medallion Tiers..."
+PROGRESS_DESCRIPTION_SUBSET = "[magenta]  {subset_name}"
+
+HINT_VALUE_THRESHOLD = 0
+
+JSON_PATTERN = r"(\{.*\})"
+ANSWER_KEY = "answer"
+PERCEPTION_KEY = "perception"
+GRID_KEY = "grid"
+
+GRID_CELL_REPLACEMENT = "0"
+
+SUCCESS_SYMBOL = "✓"
+FAILURE_SYMBOL = "✗"
+DIM_STYLE = "dim"
+GREEN_STYLE = "green"
+RED_STYLE = "red"
+CYAN_STYLE = "cyan"
+MAGENTA_STYLE = "magenta"
+YELLOW_STYLE = "yellow"
+BLUE_STYLE = "blue"
+
+
 def normalize_grid(grid):
     if not grid or not isinstance(grid, list):
         return []
-    return [[str(cell).replace('*', '0') for cell in row] for row in grid]
+    return [[str(cell).replace('*', GRID_CELL_REPLACEMENT) for cell in row] for row in grid]
 
-def robust_parse_solution(text: str):
+
+def robust_parse_solution(text):
     if not isinstance(text, str):
         return None
     
-    match = re.search(r"(\{.*\})", text, re.DOTALL)
+    match = re.search(JSON_PATTERN, text, re.DOTALL)
     if not match:
         return None
         
@@ -40,135 +96,158 @@ def robust_parse_solution(text: str):
             ans_match = re.search(r'"answer":\s*(\[\[.*?\]\])', content, re.DOTALL)
             if ans_match:
                 try:
-                    return {"answer": ast.literal_eval(ans_match.group(1))}
+                    return {ANSWER_KEY: ast.literal_eval(ans_match.group(1))}
                 except Exception:
-                    console.print("Ouch")
                     pass
     return None
 
+
+def extract_solution_grid(answer_data):
+    if ANSWER_KEY in answer_data:
+        return answer_data[ANSWER_KEY]
+    elif PERCEPTION_KEY in answer_data:
+        return answer_data[PERCEPTION_KEY]
+    elif GRID_KEY in answer_data:
+        return answer_data[GRID_KEY]
+    return None
+
+
+def classify_puzzle_size(size):
+    if size <= SMALL_SIZE_MAX:
+        return "5x5"
+    elif size <= MEDIUM_SIZE_MAX:
+        return "8x8"
+    elif size == LARGE_SIZE:
+        return "12x12"
+    else:
+        return "other"
+
+
+def calculate_complexity(hint_dict):
+    total = 0
+    row_hints = hint_dict.get('row_hints', [])
+    for hint_list in row_hints:
+        if isinstance(hint_list, list):
+            total += sum(hint_list)
+    return total
+
+
+def process_single_row(row, row_index):
+    try:
+        raw = row.to_dict()
+        init_data = ast.literal_eval(raw['initialization'])
+        answer_data = robust_parse_solution(raw['sample_answer'])
+        
+        if not answer_data:
+            raise ValueError("Regex failed to find valid JSON/Dict in sample_answer")
+
+        init_grid = init_data.get('initialization', [])
+        sol_grid = extract_solution_grid(answer_data)
+        
+        if sol_grid is None:
+            raise ValueError(f"No grid keys found. Keys: {list(answer_data.keys())}")
+
+        raw_hints = init_data.get('hints', init_data)
+        
+        record_dict = {
+            "id": str(raw.get('file_name', row_index)),
+            "size": len(init_grid),
+            "initialization": normalize_grid(init_grid),
+            "solution": normalize_grid(sol_grid),
+            "hints": {
+                "row_hints": raw_hints.get('row_hints', []),
+                "col_hints": raw_hints.get('col_hints', [])
+            }
+        }
+
+        puzzle = msgspec.convert(record_dict, NonogramPuzzle)
+        return msgspec.to_builtins(puzzle), None
+        
+    except Exception as e:
+        return None, str(e)
+
+
+def save_subset_results(subset_name, valid_records, first_error):
+    if valid_records:
+        silver_df = pd.DataFrame(valid_records)
+        output_path = settings.SILVER_DIR / f"{subset_name}{SILVER_SUFFIX}"
+        silver_df.to_parquet(output_path, engine='pyarrow', index=False)
+        
+        generate_atlas(silver_df, subset_name)
+        console.print(f"[{GREEN_STYLE}]{SUCCESS_SYMBOL} {subset_name}: {len(valid_records)} rows refined.[/{GREEN_STYLE}]")
+    else:
+        console.print(f"[bold {RED_STYLE}]{FAILURE_SYMBOL} {subset_name} FAILED COMPLETELY[/bold {RED_STYLE}]")
+        if first_error:
+            console.print(f"[{DIM_STYLE}]First error: {first_error}[/{DIM_STYLE}]")
+
+
 def process_silver_data():
     settings.SILVER_DIR.mkdir(parents=True, exist_ok=True)
-    subsets = [d for d in settings.BRONZE_DIR.iterdir() if d.is_dir() and (d / "test.parquet").exists()]
+    subsets = [d for d in settings.BRONZE_DIR.iterdir() if d.is_dir() and (d / PARQUET_FILENAME).exists()]
     
-    all_size_stats = {"5x5": 0, "8x8": 0, "12x12": 0, "other": 0}
+    all_size_stats = {label: 0 for label in SIZE_LABELS}
     all_complexities = []
     
     with Progress(SpinnerColumn(), TextColumn("{task.description}"), BarColumn(), TaskProgressColumn()) as progress:
-        overall_task = progress.add_task("[yellow]Refining Medallion Tiers...", total=len(subsets))
+        overall_task = progress.add_task(PROGRESS_DESCRIPTION_TRAIN, total=len(subsets))
         
         for subset_dir in subsets:
             subset_name = subset_dir.name
-            df = pd.read_parquet(subset_dir / "test.parquet")
+            df = pd.read_parquet(subset_dir / PARQUET_FILENAME)
             valid_records = []
             first_error = None
 
-            row_task = progress.add_task(f"[magenta]  {subset_name}", total=len(df))
+            row_task = progress.add_task(PROGRESS_DESCRIPTION_SUBSET.format(subset_name=subset_name), total=len(df))
+            
             for i, (_, row) in enumerate(df.iterrows()):
-                try:
-                    raw = row.to_dict()
-                    init_data = ast.literal_eval(raw['initialization'])
-                    answer_data = robust_parse_solution(raw['sample_answer'])
+                record, error = process_single_row(row, i)
+                
+                if record:
+                    valid_records.append(record)
                     
-                    if not answer_data:
-                        raise ValueError("Regex failed to find valid JSON/Dict in sample_answer")
-
-                    init_grid = init_data.get('initialization', [])
-                    sol_grid = answer_data.get('answer') or answer_data.get('perception') or answer_data.get('grid')
+                    size = record["size"]
+                    size_key = classify_puzzle_size(size)
+                    all_size_stats[size_key] += 1
                     
-                    if sol_grid is None:
-                        raise ValueError(f"No grid keys found. Keys: {list(answer_data.keys())}")
-
-                    raw_hints = init_data.get('hints', init_data)
-                    
-                    record_dict = {
-                        "id": str(raw.get('file_name', i)),
-                        "size": len(init_grid),
-                        "initialization": normalize_grid(init_grid),
-                        "solution": normalize_grid(sol_grid),
-                        "hints": {
-                            "row_hints": raw_hints.get('row_hints', []),
-                            "col_hints": raw_hints.get('col_hints', [])
-                        }
-                    }
-
-                    puzzle = msgspec.convert(record_dict, NonogramPuzzle)
-                    valid_records.append(msgspec.to_builtins(puzzle))
-                    
-                    size = len(init_grid)
-                    if size <= 5:
-                        all_size_stats["5x5"] += 1
-                    elif size <= 8:
-                        all_size_stats["8x8"] += 1
-                    elif size == 12:
-                        all_size_stats["12x12"] += 1
-                    else:
-                        all_size_stats["other"] += 1
-                    
-                    complexity = 0
-                    for hint_list in record_dict["hints"]["row_hints"] + record_dict["hints"]["col_hints"]:
-                        if isinstance(hint_list, list):
-                            complexity += sum(hint_list)
-                    
+                    complexity = calculate_complexity(record["hints"])
                     all_complexities.append({
                         "size": size,
                         "complexity": complexity,
                         "subset": subset_name,
                         "size_label": f"{size}x{size}"
                     })
-
-                except Exception as e:
-                    if first_error is None:
-                        first_error = {"row": i, "error": str(e)}
-                    continue
-                finally:
-                    progress.advance(row_task)
+                elif first_error is None and error:
+                    first_error = {"row": i, "error": error}
+                    
+                progress.advance(row_task)
             
             progress.remove_task(row_task)
-            
-            if valid_records:
-                silver_df = pd.DataFrame(valid_records)
-                output_path = settings.SILVER_DIR / f"{subset_name}_clean.parquet"
-                silver_df.to_parquet(output_path, engine='pyarrow', index=False)
-                
-                generate_atlas(silver_df, subset_name)
-                console.print(f"[green]✓ {subset_name}: {len(valid_records)} rows refined.")
-            else:
-                console.print(f"[bold red]✗ {subset_name} FAILED COMPLETELY[/bold red]")
-                if first_error:
-                    console.print(f"[dim]First error: {first_error['error']}[/dim]")
-            
+            save_subset_results(subset_name, valid_records, first_error)
             progress.advance(overall_task)
     
     if all_complexities:
         generate_silver_visualizations(all_size_stats, all_complexities)
 
-def generate_atlas(df: pd.DataFrame, name: str):
-    viz_dir = settings.ROOT_DIR / "docs" / "visualizations"
+
+def generate_atlas(df, name):
+    viz_dir = settings.ROOT_DIR / "docs" / VIZ_DIR_NAME
     viz_dir.mkdir(parents=True, exist_ok=True)
     
-    def calc_complexity(h):
-        total = 0
-        row_hints = h.get('row_hints', [])
-        for hint_list in row_hints:
-            if isinstance(hint_list, list):
-                total += sum(hint_list)
-        return total
+    df['complexity'] = df['hints'].apply(calculate_complexity)
     
-    df['complexity'] = df['hints'].apply(calc_complexity)
-    
-    plt.figure(figsize=(10, 5))
-    sns.histplot(data=df, x='complexity', kde=True, color='crimson', bins=15)
-    plt.title(f'Complexity Atlas: {name}', fontsize=14, fontweight='bold')
-    plt.xlabel('Complexity (Sum of Row Hints)', fontsize=12)
-    plt.ylabel('Frequency', fontsize=12)
-    plt.grid(axis='y', alpha=0.3)
+    plt.figure(figsize=FIGURE_SIZE_MEDIUM)
+    sns.histplot(data=df, x='complexity', kde=True, color=HISTPLOT_COLOR, bins=BINS_COUNT)
+    plt.title(f'Complexity Atlas: {name}', fontsize=FONT_SIZE_TITLE, fontweight=FONT_WEIGHT_BOLD)
+    plt.xlabel('Complexity (Sum of Row Hints)', fontsize=FONT_SIZE_AXIS)
+    plt.ylabel('Frequency', fontsize=FONT_SIZE_AXIS)
+    plt.grid(axis='y', alpha=ALPHA_GRID)
     plt.tight_layout()
-    plt.savefig(viz_dir / f"{name}_complexity_atlas.png", dpi=150)
+    plt.savefig(viz_dir / f"{name}_complexity_atlas.png", dpi=DPI_HIGH)
     plt.close()
 
-def generate_silver_visualizations(size_stats: dict, complexities: list):
-    """From collected metrics"""
-    viz_dir = settings.ROOT_DIR / "docs" / "visualizations"
+
+def generate_silver_visualizations(size_stats, complexities):
+    viz_dir = settings.ROOT_DIR / "docs" / VIZ_DIR_NAME
     viz_dir.mkdir(parents=True, exist_ok=True)
     
     metrics = {
@@ -177,80 +256,80 @@ def generate_silver_visualizations(size_stats: dict, complexities: list):
         "total_puzzles": sum(size_stats.values())
     }
     
-    json_path = viz_dir / "silver_metrics.json"
+    json_path = viz_dir / SILVER_METRICS_JSON
     with open(json_path, 'w') as f:
         json.dump(metrics, f, indent=2)
     
-    console.print(f"[dim]Metrics saved to: {json_path}[/dim]")
+    console.print(f"[{DIM_STYLE}]Metrics saved to: {json_path}[/{DIM_STYLE}]")
     
     generate_silver_pngs_from_metrics(metrics, viz_dir)
     print_silver_summary(metrics)
 
-def generate_silver_pngs_from_metrics(metrics: dict, viz_dir: Path):
-    sizes = ["5x5", "8x8", "12x12", "other"]
+
+def generate_silver_pngs_from_metrics(metrics, viz_dir):
+    sizes = SIZE_LABELS
     counts = [metrics["size_distribution"].get(s, 0) for s in sizes]
     
-    plt.figure(figsize=(10, 6))
-    bars = plt.bar(sizes, counts, color=['#4e79a7', '#f28e2c', '#59a14f', '#e15759'])
-    plt.title('Puzzle Size Distribution (Silver Layer)', fontsize=14, fontweight='bold')
-    plt.xlabel('Puzzle Size', fontsize=12)
-    plt.ylabel('Number of Puzzles', fontsize=12)
-    plt.grid(axis='y', alpha=0.3)
+    plt.figure(figsize=FIGURE_SIZE_LARGE)
+    bars = plt.bar(sizes, counts, color=[SIZE_COLORS[s] for s in sizes])
+    plt.title('Puzzle Size Distribution (Silver Layer)', fontsize=FONT_SIZE_TITLE, fontweight=FONT_WEIGHT_BOLD)
+    plt.xlabel('Puzzle Size', fontsize=FONT_SIZE_AXIS)
+    plt.ylabel('Number of Puzzles', fontsize=FONT_SIZE_AXIS)
+    plt.grid(axis='y', alpha=ALPHA_GRID)
     
     for bar in bars:
         height = bar.get_height()
-        if height > 0:
+        if height > HINT_VALUE_THRESHOLD:
             plt.text(bar.get_x() + bar.get_width()/2., height,
-                    f'{int(height)}', ha='center', va='bottom', fontsize=10)
+                    f'{int(height)}', ha='center', va='bottom', fontsize=BAR_ANNOTATION_FONT_SIZE)
     
     plt.tight_layout()
-    plt.savefig(viz_dir / "silver_size_distribution.png", dpi=150)
+    plt.savefig(viz_dir / "silver_size_distribution.png", dpi=DPI_HIGH)
     plt.close()
     
     if metrics["complexities"]:
         comp_df = pd.DataFrame(metrics["complexities"])
         
-        plt.figure(figsize=(10, 6))
-        
-        size_colors = {'5x5': '#4e79a7', '8x8': '#f28e2c', '12x12': '#59a14f'}
+        plt.figure(figsize=FIGURE_SIZE_LARGE)
         
         for size_label in comp_df['size_label'].unique():
             subset = comp_df[comp_df['size_label'] == size_label]
-            color = size_colors.get(size_label, '#e15759')
+            color = SIZE_COLORS.get(size_label, SIZE_COLORS["other"])
             
             plt.scatter(subset['size'], subset['complexity'],
-                       color=color, alpha=0.7, s=60,
-                       label=size_label, edgecolors='black', linewidth=0.5)
+                       color=color, alpha=SCATTER_ALPHA, s=SCATTER_SIZE,
+                       label=size_label, edgecolors='black', linewidth=SCATTER_EDGE_WIDTH)
         
-        plt.title('Puzzle Complexity vs Size', fontsize=14, fontweight='bold')
-        plt.xlabel('Puzzle Size', fontsize=12)
-        plt.ylabel('Complexity (Sum of Hints)', fontsize=12)
+        plt.title('Puzzle Complexity vs Size', fontsize=FONT_SIZE_TITLE, fontweight=FONT_WEIGHT_BOLD)
+        plt.xlabel('Puzzle Size', fontsize=FONT_SIZE_AXIS)
+        plt.ylabel('Complexity (Sum of Hints)', fontsize=FONT_SIZE_AXIS)
         plt.legend()
-        plt.grid(True, alpha=0.3)
+        plt.grid(True, alpha=ALPHA_GRID)
         plt.tight_layout()
-        plt.savefig(viz_dir / "silver_complexity_vs_size.png", dpi=150)
+        plt.savefig(viz_dir / "silver_complexity_vs_size.png", dpi=DPI_HIGH)
         plt.close()
 
-def print_silver_summary(metrics: dict):
+
+def print_silver_summary(metrics):
     size_stats = metrics["size_distribution"]
     complexities = metrics["complexities"]
     
-    table = Table(title="Silver Layer Dataset Composition", show_header=True, header_style="bold cyan")
-    table.add_column("Puzzle Size", style="cyan", justify="center")
-    table.add_column("Count", style="green", justify="right")
-    table.add_column("% of Total", style="yellow", justify="right")
-    table.add_column("Avg Complexity", style="magenta", justify="right")
+    table = Table(title="Silver Layer Dataset Composition", show_header=True, header_style=f"bold {CYAN_STYLE}")
+    table.add_column("Puzzle Size", style=CYAN_STYLE, justify="center")
+    table.add_column("Count", style=GREEN_STYLE, justify="right")
+    table.add_column("% of Total", style=YELLOW_STYLE, justify="right")
+    table.add_column("Avg Complexity", style=MAGENTA_STYLE, justify="right")
     
     total = metrics["total_puzzles"]
     
-    for size_key in ["5x5", "8x8", "12x12"]:
+    for size_key in SIZE_LABELS:
         count = size_stats.get(size_key, 0)
         if count == 0:
             continue
         
-        percentage = (count / total) * 100
+        percentage = (count / total) * 100 if total > 0 else 0
         
-        size_num = int(size_key.split('x')[0])
+        size_num = int(size_key.split('x')[0]) if size_key != "other" else 0
         size_complexities = [c["complexity"] for c in complexities if c["size"] == size_num]
         
         if size_complexities:
@@ -266,7 +345,7 @@ def print_silver_summary(metrics: dict):
         )
     
     console.print("\n")
-    console.print(Panel.fit("[bold cyan]Silver Layer Analysis Complete[/bold cyan]", border_style="cyan"))
+    console.print(Panel.fit(f"[bold {CYAN_STYLE}]Silver Layer Analysis Complete[/bold {CYAN_STYLE}]", border_style=CYAN_STYLE))
     console.print(table)
-    console.print(f"\n[dim]Total puzzles processed: {total:,}")
-    console.print("[dim]Visualizations saved to: docs/visualizations/[/dim]")
+    console.print(f"\n[{DIM_STYLE}]Total puzzles processed: {total:,}")
+    console.print(f"[{DIM_STYLE}]Visualizations saved to: docs/{VIZ_DIR_NAME}/[/{DIM_STYLE}]")
