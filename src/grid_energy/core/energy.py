@@ -2,23 +2,17 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-# Energy calculation constants
-NEURAL_ENERGY_SCALING_FACTOR = 3.0
-LOGIC_ENERGY_SCALING_FACTOR = 10.0
+NEURAL_ENERGY_SCALING_FACTOR = 1.0
+LOGIC_ENERGY_SCALING_FACTOR = 2
 BINARY_ENERGY_SCALING_FACTOR = 0.1
-
-# Grid processing constants
 SIGMOID_SCALE = 3.0
 BINARY_THRESHOLD_SCALE = 3.0
 BINARY_THRESHOLD = 0.5
-
-# Default size constants
-DEFAULT_PUZZLE_SIZE = 12
+DEFAULT_PUZZLE_SIZE = 5
 MIN_PUZZLE_SIZE = 1
-
-# Error reduction constants
 ROW_ERROR_REDUCTION = 'sum'
 COL_ERROR_REDUCTION = 'sum'
+ENERGY_TEMPERATURE = 0.1
 
 
 class NonogramEnergy(nn.Module):
@@ -86,6 +80,7 @@ class NonogramEnergy(nn.Module):
         batch_size = grid.size(0)
 
         neural_energy = self.model(grid, self.current_hints)
+        neural_energy = neural_energy * ENERGY_TEMPERATURE
 
         soft_grid = torch.sigmoid(grid * SIGMOID_SCALE)
 

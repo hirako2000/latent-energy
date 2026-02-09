@@ -1,19 +1,12 @@
 import torch
 
-# Solver constants
 DEFAULT_STEP_SIZE = 0.03
 DEFAULT_N_STEPS = 300
 DEFAULT_DETERMINISTIC = True
-
-# Noise parameters
 NOISE_INITIAL_SCALE = 0.1
 NOISE_DECAY_POWER = 2
-
-# Clamping bounds
 CLAMP_MIN = -2.0
 CLAMP_MAX = 2.0
-
-# Gradient computation
 GRADIENT_ENABLED = True
 GRADIENT_RETURN_FIRST_ONLY = True
 
