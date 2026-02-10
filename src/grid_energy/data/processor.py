@@ -5,7 +5,6 @@ import pandas as pd
 import msgspec
 import matplotlib.pyplot as plt
 import seaborn as sns
-from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -28,7 +27,7 @@ SIZE_LABELS = ["5x5", "8x8", "12x12", "other"]
 
 SIZE_COLORS = {
     "5x5": "#4e79a7",
-    "8x8": "#f28e2c", 
+    "8x8": "#f28e2c",
     "12x12": "#59a14f",
     "other": "#e15759"
 }
@@ -98,6 +97,7 @@ def robust_parse_solution(text):
                 try:
                     return {ANSWER_KEY: ast.literal_eval(ans_match.group(1))}
                 except Exception:
+                    console.print("Error parsing solution")
                     pass
     return None
 
@@ -185,7 +185,7 @@ def process_silver_data():
     settings.SILVER_DIR.mkdir(parents=True, exist_ok=True)
     subsets = [d for d in settings.BRONZE_DIR.iterdir() if d.is_dir() and (d / PARQUET_FILENAME).exists()]
     
-    all_size_stats = {label: 0 for label in SIZE_LABELS}
+    all_size_stats = dict.fromkeys(SIZE_LABELS, 0)
     all_complexities = []
     
     with Progress(SpinnerColumn(), TextColumn("{task.description}"), BarColumn(), TaskProgressColumn()) as progress:

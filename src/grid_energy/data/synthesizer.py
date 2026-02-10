@@ -4,7 +4,6 @@ import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
-from pathlib import Path
 from typing import Any, cast
 from rich.console import Console
 from rich.panel import Panel
@@ -76,8 +75,8 @@ def create_empty_tensors(num_samples, max_grid, max_hint_len):
     return grid_tensors, row_hints, col_hints
 
 
-def process_puzzle_row(i, row, grid_tensors, row_hints, col_hints, size_stats, 
-                       fill_rates_by_size, hint_lengths_by_size, 
+def process_puzzle_row(i, row, grid_tensors, row_hints, col_hints, size_stats,
+                       fill_rates_by_size, hint_lengths_by_size,
                        hint_values_by_size, complexities_by_size):
     sol = row['solution']
     curr_size = int(row['size'])
@@ -409,7 +408,7 @@ def verify_croissant(data=None):
     grid = grids[idx]
     
     raw_id = str(ids[idx])
-    display_id = (raw_id[:DISPLAY_ID_MAX_LENGTH - len(DISPLAY_ID_ELLIPSIS)] + 
+    display_id = (raw_id[:DISPLAY_ID_MAX_LENGTH - len(DISPLAY_ID_ELLIPSIS)] +
                  DISPLAY_ID_ELLIPSIS) if len(raw_id) > DISPLAY_ID_MAX_LENGTH else raw_id
     
     console.print(Panel(

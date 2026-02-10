@@ -347,7 +347,7 @@ def train_ebm(epochs=DEFAULT_EPOCHS, batch_size=DEFAULT_BATCH_SIZE,
             current_lr = optimizer.param_groups[0]['lr']
             
             val_acc = None
-            size_accuracies = {size_key: None for size_key in SIZE_CATEGORIES}
+            size_accuracies = dict.fromkeys(SIZE_CATEGORIES)
             
             if (epoch + 1) % validation_freq == 0 or epoch == 0:
                 val_acc, size_accuracies = validate_model(

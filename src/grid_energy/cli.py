@@ -5,15 +5,11 @@ import sys
 import time
 from typing import Annotated
 
-import json
-from pathlib import Path
 
 import numpy as np
 import torch
 import typer
 from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 
 from grid_energy.core.energy import NonogramEnergy
 from grid_energy.core.models import NonogramCNN
@@ -150,109 +146,6 @@ def generate_seed_from_puzzle_id(puzzle_id, attempt):
     hash_obj = hashlib.md5(puzzle_id.encode())
     hash_int = int(hash_obj.hexdigest()[:HASH_HEX_LENGTH], HASH_BASE)
     return (hash_int + attempt) % RANDOM_INT_RANGE
-
-
-@app.command()
-def resolve(
-    puzzle_id: Annotated[str, typer.Option(help="Specific puzzle ID")] = "",
-    steps: int = typer.Option(DEFAULT_SOLVER_STEPS, help="Number of kinetic vibration steps"),
-    compare: bool = typer.Option(True, help="Compare with true solution for analysis"),
-    seed: int = typer.Option(DEFAULT_SEED, help="Random seed for reproducibility"),
-    max_retries: int = typer.Option(1, help="Max attempts to find a logical solution"),
-):
-    torch.manual_seed(seed)
-    device = get_device()
-    ds = CroissantDataset()
-    
-    result = select_puzzle(ds, puzzle_id, seed)
-    if result[0] is None:
-        return
-    sample, puzzle_id, _ = result
-    
-    hints = sample["hints"].unsqueeze(0).to(device)
-    hint_dim = hints.view(1, -1).size(1)
-    
-    model = load_model(device, settings.ROOT_DIR / MODEL_WEIGHTS_BEST_PATH, hint_dim)
-    energy_fn = NonogramEnergy(model=model)
-    solver = KineticSolver(energy_fn, n_steps=steps, deterministic=True)
-    
-    target_grid = sample["target_grid"].unsqueeze(0).to(device)
-    
-    puzzle_size, row_hints_raw, col_hints_raw = calculate_puzzle_size(hints)
-    clean_row_hints, clean_col_hints = extract_clean_hints(row_hints_raw, col_hints_raw, puzzle_size)
-    
-    energy_fn.set_context(hints)
-    
-    best_resolved = None
-    min_errors = MAX_ERROR_COUNT_INITIAL
-    tries_taken = 0
-    
-    if torch.cuda.is_available():
-        torch.cuda.synchronize()
-    start_time = time.perf_counter()
-    
-    for attempt in range(max_retries):
-        tries_taken += 1
-        
-        init_state = model.predict_grid(hints)
-        
-        resolved = solver.resolve(init_state, hints)
-        error_count = get_procedural_score(resolved, puzzle_size, clean_row_hints, clean_col_hints)
-        
-        if error_count < min_errors:
-            min_errors = error_count
-            best_resolved = resolved.clone()
-        
-        if error_count == 0:
-            break
-        
-        if attempt < max_retries - 1:
-            console.print(f"  [{YELLOW_STYLE}]Attempt {tries_taken}: Logical Errors in {error_count} lines. Retrying...[/{YELLOW_STYLE}]")
-    
-    if torch.cuda.is_available():
-        torch.cuda.synchronize()
-    total_ms = (time.perf_counter() - start_time) * 1000
-    
-    if best_resolved is None:
-        console.print(f"[{RED_STYLE}]Error: Failed to resolve puzzle[/{RED_STYLE}]")
-        return
-    
-    final_grid = (torch.sigmoid(best_resolved * SIGMOID_SCALE) > 0.5).int().squeeze().cpu().numpy()
-    final_display = final_grid[:puzzle_size, :puzzle_size]
-    
-    console.print(f"\n[{BOLD_STYLE}{GREEN_STYLE}]Procedural Equilibrium Reached ({puzzle_size}x{puzzle_size}):[/{BOLD_STYLE}{GREEN_STYLE}]")
-    for row in final_display:
-        row_str = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY for cell in row])
-        console.print(f"  {row_str}")
-    
-    console.print(f"\n[{BOLD_STYLE}]Final Report:[/{BOLD_STYLE}]")
-    
-    if min_errors == 0:
-        status_text = f"[{GREEN_STYLE}]{SOLVED_STATUS}[/{GREEN_STYLE}]"
-    else:
-        status_text = f"[{RED_STYLE}]{FAILED_STATUS} ({min_errors} lines wrong)[/{RED_STYLE}]"
-    
-    console.print(f"  Procedural Status: {status_text}")
-    console.print(f"  Tries Taken: [{BOLD_STYLE}{CYAN_STYLE}]{tries_taken}[/{BOLD_STYLE}{CYAN_STYLE}]")
-    console.print(f"  Total Time: [{BOLD_STYLE}{MAGENTA_STYLE}]{total_ms:.2f} ms[/{BOLD_STYLE}{MAGENTA_STYLE}]")
-    
-    if compare:
-        target_np = target_grid.int().squeeze().cpu().numpy()[:puzzle_size, :puzzle_size]
-        pixel_acc = (final_display == target_np).mean()
-        console.print(f"  Dataset Match: {pixel_acc:.2%}")
-        
-        console.print(f"\n[{BOLD_STYLE}{CYAN_STYLE}]Comparison: Predicted vs Dataset Solution[/{BOLD_STYLE}{CYAN_STYLE}]")
-        console.print(f"[{DIM_STYLE}]Left: Predicted | Right: Dataset[/{DIM_STYLE}]")
-        
-        for i in range(puzzle_size):
-            pred_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY 
-                              for cell in final_display[i]])
-            target_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY 
-                                for cell in target_np[i]])
-            console.print(f"  {pred_row}   │   {target_row}")
-    
-    return best_resolved
-
 
 def display_solution(final_grid, puzzle_size):
     final_display = final_grid[:puzzle_size, :puzzle_size]
@@ -407,57 +300,13 @@ def resolve(
         console.print(f"[{DIM_STYLE}]Left: Predicted | Right: Dataset[/{DIM_STYLE}]")
         
         for i in range(puzzle_size):
-            pred_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY 
+            pred_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY
                               for cell in final_display[i]])
-            target_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY 
+            target_row = ''.join([DISPLAY_SYMBOL_FILLED if cell == 1 else DISPLAY_SYMBOL_EMPTY
                                 for cell in target_np[i]])
             console.print(f"  {pred_row}   │   {target_row}")
     
     return best_resolved
-
-@app.command()
-def diagnose(puzzle_id: str):
-    device = get_device()
-    ds = CroissantDataset()
-    
-    try:
-        target_idx = ds.ids.index(puzzle_id)
-        sample = ds[target_idx]
-    except ValueError:
-        console.print(f"[{RED_STYLE}]Error: {puzzle_id} not found.[/{RED_STYLE}]")
-        return
-    
-    hints = sample["hints"].unsqueeze(0).to(device)
-    hint_dim = hints.view(1, -1).size(1)
-    
-    model = load_model(device, settings.ROOT_DIR / MODEL_WEIGHTS_BEST_PATH, hint_dim)
-    energy_fn = NonogramEnergy(model=model)
-    
-    true_grid = sample["target_grid"].unsqueeze(0).to(device)
-    noise_grid = torch.randn_like(true_grid)
-    
-    energy_fn.set_context(hints)
-    
-    with torch.no_grad():
-        true_energy = energy_fn(true_grid).item()
-        noise_energy = energy_fn(noise_grid).item()
-    
-    console.print(Panel(f"Energy Analysis: [{BOLD_STYLE}]{puzzle_id}[/]", style=CYAN_STYLE))
-    
-    table = Table(show_header=True, header_style=f"{BOLD_STYLE}{MAGENTA_STYLE}")
-    table.add_column("State", style=DIM_STYLE)
-    table.add_column("Energy Score (Lower is Better)", justify="right")
-    
-    table.add_row("Ground Truth (from Parquet)", f"{true_energy:.4f}")
-    table.add_row("Random Noise", f"{noise_energy:.4f}")
-    
-    console.print(table)
-    
-    if true_energy < noise_energy:
-        console.print(f"[{BOLD_STYLE}{GREEN_STYLE}]✓ Reality Check Passed:[/] The model recognizes the true solution as the lower energy state.")
-    else:
-        console.print(f"[{BOLD_STYLE}{RED_STYLE}]✗ Reality Check Failed:[/] The model is 'confused' and prefers noise over the solution.")
-
 
 @app.command(name="list-ids")
 def list_ids(limit: int = typer.Option(DEFAULT_LIMIT_IDS, help="Number of IDs to show")):

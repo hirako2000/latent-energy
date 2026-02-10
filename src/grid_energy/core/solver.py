@@ -30,7 +30,7 @@ class KineticSolver:
         return NOISE_INITIAL_SCALE * decay_factor
 
     def resolve(self, initial_grid: torch.Tensor, hints: torch.Tensor):
-        self.energy_fn.set_context(hints)
+        self.energy_fn.set_context(hints) # type: ignore
         x = initial_grid.detach().clone().requires_grad_(True)
 
         for i in range(self.n_steps):
