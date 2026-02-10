@@ -1,4 +1,3 @@
-
 # Latent energy
 
 _Kinetic resolution for logic systems using energy based models_
@@ -45,7 +44,7 @@ $$
 
 ## Training methodology
 
-### Phase 1: Supervised pre training
+### Supervised pre training
 The model first learns direct mapping from hints to solutions using mean squared error loss. This provides a strong initialization for the energy based learning phase.
 
 | Parameter | Value | Purpose |
@@ -56,7 +55,7 @@ The model first learns direct mapping from hints to solutions using mean squared
 | Gradient clipping | 0.5 | Prevent exploding gradients |
 | Loss function | $\text{MSE}(x_{\text{pred}}, x_{\text{true}})$ | Pixel wise accuracy |
 
-### Phase 2: Energy based training
+### Energy based training
 The model learns to distinguish good solutions from bad ones through contrastive learning. We compare real solutions against random noise and perturbed solutions.
 
 Contrastive loss:
@@ -158,4 +157,3 @@ The codebase uses:
 - Comprehensive test suite with >90% coverage
 
 All training and inference supports GPU acceleration through CUDA, MPS, or CPU fallback. The latency to solve a problem is approximately $1 \times 10^{-1}$ seconds.
-```
