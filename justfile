@@ -84,3 +84,6 @@ benchmark:
 # Launch the tension dashboard
 viz:
     uv run grid-energy resolve demo-puzzle --viz
+
+viz-energy:
+    uv run grid-energy visualize-energy

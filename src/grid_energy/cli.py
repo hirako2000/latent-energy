@@ -20,6 +20,7 @@ from grid_energy.data.processor import process_silver_data
 from grid_energy.data.synthesizer import synthesize_gold
 from grid_energy.train import train_ebm
 from grid_energy.utils.config import settings
+from grid_energy.visualization.energy_visualizer import create_multi_cell_atlas
 
 app = typer.Typer(help="Grid Energy: Structural Integrity for Logic.")
 console = Console()
@@ -323,6 +324,10 @@ def list_ids(limit: int = typer.Option(DEFAULT_LIMIT_IDS, help="Number of IDs to
     except Exception as e:
         console.print(f"[{BOLD_STYLE}{RED_STYLE}]Error loading Gold Layer:[/{BOLD_STYLE}{RED_STYLE}] {str(e)}", markup=False)
 
+@app.command()
+def visualize_energy():
+    """Generate comprehensive multi-cell energy atlas."""
+    create_multi_cell_atlas()
 
 def main():
     app()

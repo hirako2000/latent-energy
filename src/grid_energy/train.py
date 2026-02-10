@@ -387,10 +387,10 @@ def train_ebm(epochs=DEFAULT_EPOCHS, batch_size=DEFAULT_BATCH_SIZE,
     torch.save(backbone.state_dict(), FINAL_MODEL_PATH)
     
     console.print("\n[bold cyan]Running final test on entire dataset...[/bold cyan]")
-    test_all_puzzles(backbone, energy_fn, solver, device, full_dataset)
+    check_all_puzzles(backbone, energy_fn, solver, device, full_dataset)
 
 
-def test_all_puzzles(model, energy_fn, solver, device, dataset):
+def check_all_puzzles(model, energy_fn, solver, device, dataset):
     test_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
     
     size_results = {
