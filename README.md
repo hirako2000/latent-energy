@@ -1,7 +1,17 @@
+# Latent Energy - A model to solve nonograms.
 
-# Latent Energy
 
-A model to solve nonograms.
+<div align="center">
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.14+-blue.svg?style=for-the-badge" alt="Python 3.14+">
+  </a>
+  <a href="https://pytorch.org/">
+  <img src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" alt="PyTorch">
+  </a>
+  <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json&style=for-the-badge" alt="uv">
+  </a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v0.json&style=for-the-badge" alt="Ruff">
+  </a>
+</div>
 
 <div align="center">
   <img src="./img/output.gif" alt="Grid Energy Solver Demo" width="380">
@@ -11,7 +21,19 @@ A model to solve nonograms.
 
 This project implements an energy based model for solving nonogram puzzles, treating constraint satisfaction as an energy minimization problem rather than a search problem. The system learns to assign energy values to grid configurations, where lower energy corresponds to more likely solutions, and then uses gradient based optimization to find the minimum energy state that satisfies all constraints.
 
-## The technical approach
+# Table of Contents
+
+- [The technical approach](#technical-approach)
+- [Energy function](#energy-function)
+- [Data pipeline](#data-pipeline)
+- [Training](#training)
+- [Kinetic resolution solver](#kinetic-resolution-solver)
+- [Performance](#performance)
+- [Key insights](#key-insights)
+- [Usage](#usage)
+- [Library and Hardware](#library-and-hardware)
+
+## Technical approach
 
 We use a convolutional neural network architecture to model the energy function, combined with explicit logical constraints in the energy formulation. The training process involves both supervised pre training and self supervised contrastive learning.
 
@@ -91,6 +113,8 @@ For the processed data, we generate visualizations for at-a-glance verification
 
  </table>
 
+Read more about [data-engineering](./docs/data-engineering.md)
+
 ## Training
 
 A two phases approach.
@@ -148,7 +172,7 @@ Parameters:
   </tr>
 </table>
 
-See more about [training](./docs/training.md)
+Read more about [training](./docs/training.md)
 
 ## Kinetic resolution solver
 
@@ -179,8 +203,6 @@ Or the dashboard below
 
 The hybrid training approach achieves 100 percent accuracy on the validation set after 50 epochs. The kinetic solver converges to correct solutions in 150 300 steps, with inference times under 100 milliseconds per puzzle on GPU.
 
-## Key insights
-
 1. The convolutional architecture effectively captures local patterns in the grid configurations
 2. Explicit logic constraints in the energy function help guide the optimization
 3. Contrastive learning with margin provides clear separation between good and bad states
@@ -188,22 +210,59 @@ The hybrid training approach achieves 100 percent accuracy on the validation set
 
 ## Usage
 
-```bash
-Install just if not available
-cargo install just
+For convenience, install [just](https://github.com/casey/just)
 
-Set up environment
+### Prerequisites
+
+- [Python](https://www.python.org/)
+- [uv](https://docs.astral.sh/uv/) installed
+
+```bash
+# install dependencies
 just setup
 
-Solve a puzzle
-just resolve id="puzzle_0060"
+# Fetch and prepare data
+just inject bronze
+just prepare-gold
 
-Train the model
+# Train model
 just train
 
-Visualize energy landscapes
+# Solve a puzzle
+just resolve puzzle_0011 # any puzzle from 0000 to 0099
+
+# Build 3d interactive energy landscapes
 just viz-energy
 ```
+
+Alternatively you may use `uv` commands directly
+
+```bash
+# prepare data
+uv run grid-energy ingest bronze
+uv run grid-energy ingest silver
+uv run grid-energy ingest gold
+
+# train model
+uv run grid-energy train --epochs 50
+
+# Solve any puzzle of dataset
+uv run grid-energy resolve --puzzle-id="puzzle_0013"
+```
+
+#### Dev utilities 
+
+```bash
+# fix linting issues
+just fix
+
+# Check pyright
+just check # this will also run the tests
+
+# Run the tests
+just test
+```
+
 
 ## Library and Hardware
 
