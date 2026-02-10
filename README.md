@@ -1,4 +1,4 @@
-# Latent Energy - A model to solve nonograms.
+# Latent Energy
 
 
 <div align="center">
@@ -12,6 +12,8 @@
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v0.json&style=for-the-badge" alt="Ruff">
   </a>
 </div>
+
+### A model to solve nonograms
 
 <div align="center">
   <img src="./img/output.gif" alt="Grid Energy Solver Demo" width="380">
