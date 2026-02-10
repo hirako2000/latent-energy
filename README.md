@@ -1,6 +1,8 @@
 
 # Latent Energy
 
+A model to solve nonograms.
+
 <div align="center">
   <img src="./img/output.gif" alt="Grid Energy Solver Demo" width="380">
 </div>
@@ -70,9 +72,22 @@ Each puzzle is encoded as:
 For the processed data, we generate visualizations for at-a-glance verification
 
 <table>
-    <tr> <td> <p align="center"><b>Summary Metrics</b></p> <img src="docs/visualizations/gold_summary_metrics.png" width="100%"> </td> <td> <p align="center"><b>Silver Complexity vs Size</b></p> <img src="docs/visualizations/silver_complexity_vs_size.png" width="100%"> </td> </tr> <tr> <td> <p align="center"><b>Silver Size Distribution</b></p> <img src="docs/visualizations/silver_size_distribution.png" width="100%"> </td> <td> <p align="center"><b>5x5 Complexity Atlas</b></p> <img src="docs/visualizations/nonogram_5x5_complexity_atlas.png" width="100%"> </td>
+    <tr>
+      <td> <p align="center"><b>Summary Metrics</b></p> <img src="docs/visualizations/gold_summary_metrics.png" width="100%"> </td> 
+      <td> <p align="center"><b>Silver Complexity vs Size</b></p> <img src="docs/visualizations/silver_complexity_vs_size.png" width="100%"> </td> 
     </tr>
-    <tr> <td width="50%"> <p align="center"><b>Complexity Density</b></p> <img src="docs/visualizations/gold_complexity_density.png" width="100%"> </td> <td width="50%"> <p align="center"><b>Hint Count Distribution</b></p> <img src="docs/visualizations/gold_hint_count_distribution.png" width="100%"> </td> </tr> <tr> <td> <p align="center"><b>Hint Value Frequency</b></p> <img src="docs/visualizations/gold_hint_value_frequency.png" width="100%"> </td> <td> <p align="center"><b>Occupancy Heatmap</b></p> <img src="docs/visualizations/gold_occupancy_heatmap.png" width="100%"> </td> </tr> 
+    <tr> 
+      <td> <p align="center"><b>Silver Size Distribution</b></p> <img src="docs/visualizations/silver_size_distribution.png" width="100%"> </td>
+      <td> <p align="center"><b>5x5 Complexity Atlas</b></p> <img src="docs/visualizations/nonogram_5x5_complexity_atlas.png" width="100%"> </td>
+    </tr>
+    <tr>
+      <td width="50%"> <p align="center"><b>Complexity Density</b></p> <img src="docs/visualizations/gold_complexity_density.png" width="100%"> </td>
+      <td width="50%"> <p align="center"><b>Hint Count Distribution</b></p> <img src="docs/visualizations/gold_hint_count_distribution.png" width="100%"> </td> 
+    </tr>
+    <tr>
+      <td> <p align="center"><b>Hint Value Frequency</b></p> <img src="docs/visualizations/gold_hint_value_frequency.png" width="100%"> </td>
+      <td> <p align="center"><b>Occupancy Heatmap</b></p> <img src="docs/visualizations/gold_occupancy_heatmap.png" width="100%"> </td>
+    </tr> 
 
  </table>
 
@@ -200,4 +215,3 @@ The codebase uses:
 - Unit test suites targetting 90+ percent coverage
 
 All training and inference supports GPU acceleration through CUDA, MPS, or CPU fallback.
-```
