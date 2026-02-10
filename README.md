@@ -269,11 +269,10 @@ just test
 
 ## Library and Hardware
 
-The codebase uses:
-- PyTorch for neural network implementation
-- UV for Python package management
-- Ruff and Pyright for linting and types
-- Just for short-hand UV commands
-- Unit test suites targetting 90+ percent coverage
+The codebase uses: [PyTorch](https://pytorch.org/) for neural network implementation. [UV](https://docs.astral.sh/uv/) for Python package management.
+[Ruff](https://docs.astral.sh/ruff/) and [Pyright](https://github.com/microsoft/pyright) for linting and types.
+[Just](https://github.com/casey/just) for short-hand UV commands.
 
-All training and inference supports GPU acceleration through CUDA, MPS, or CPU fallback.
+Unit test suites targetting 90+ percent coverage, uses [Pytest](https://docs.pytest.org/en/stable/).
+
+All training and inference supports GPU acceleration through CUDA, MPS, or CPU fallback. The project was tested on Apple Silicon with both GPU and CPU fallback.
