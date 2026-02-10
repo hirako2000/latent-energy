@@ -21,7 +21,7 @@
 
 #### Kinetic resolution for logic systems using energy based models
 
-This project implements an energy based model for solving nonogram puzzles, treating constraint satisfaction as an energy minimization problem rather than a search problem. The system learns to assign energy values to grid configurations, where lower energy corresponds to more likely solutions, and then uses gradient based optimization to find the minimum energy state that satisfies all constraints.
+This project implements an [energy based model](https://en.wikipedia.org/wiki/Energy-based_model) for solving nonogram puzzles, treating constraint satisfaction as an energy minimization problem rather than a search problem. The system learns to assign energy values to grid configurations, where lower energy corresponds to more likely solutions, and then uses gradient based optimization to find the minimum energy state that satisfies all constraints.
 
 # Table of Contents
 
@@ -37,7 +37,7 @@ This project implements an energy based model for solving nonogram puzzles, trea
 
 ## Technical approach
 
-We use a convolutional neural network architecture to model the energy function, combined with explicit logical constraints in the energy formulation. The training process involves both supervised pre training and self supervised contrastive learning.
+We implement a [Convolutional Neural Network](https://en.wikipedia.org/wiki/Convolutional_neural_network) to model the energy function, combined with explicit logical constraints in the energy formulation. The training process involves both supervised pre training and self supervised contrastive learning.
 
 ### Core components
 
@@ -78,15 +78,15 @@ E_binary = mean(grid²)
 
 ## Data pipeline
 
-The system uses a three layer medallion architecture:
+The system uses a three layer [medallion architecture](https://www.databricks.com/glossary/medallion-architecture):
 
-```
-Bronze: Raw parquet files from Hugging Face
-Silver: Processed puzzles with normalized schemas
-Gold: Tensor representations for training
-```
+**Bronze**: Raw parquet files from Hugging Face, see [ingestion.py](./src/grid_energy/data/ingestion.py)
+**Silver**: Processed puzzles with normalized schemas, in [processor.py](./src/grid_energy/data/processor.py)
+**Gold**: Tensor representations for training, via [synthesizer.py](./src/grid_energy/data/synthesizer.py)
+
 
 Each puzzle is encoded as:
+
 - Grid: 5x5 binary matrix
 - Row hints: 5x2 tensor (max 2 hints per row)
 - Column hints: 5x2 tensor (max 2 hints per column)
@@ -142,6 +142,7 @@ loss = max(0, E_solution - E_noise + margin) +
 ```
 
 Parameters:
+
 - Learning rate: 1e-4
 - Energy margin: 2.0
 - Noise scale: 0.3
