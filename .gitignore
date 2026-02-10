@@ -17,7 +17,7 @@ VGRP-Bench/
 /data/
 
 # Viz
-visualizations
+#visualizations
 
 # DVC local-only data and cache
 /data/raw/

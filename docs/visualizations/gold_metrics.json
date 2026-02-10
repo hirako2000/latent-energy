@@ -1,0 +1,19 @@
+{
+  "size_metrics": {
+    "5x5": {
+      "count": 100,
+      "avg_fill_rate": 0.4612,
+      "avg_complexity": 23.06,
+      "avg_hint_count": 7.86,
+      "max_hint_value": 5.0
+    }
+  },
+  "tensor_info": {
+    "shape": [
+      100,
+      5,
+      5
+    ],
+    "global_fill_rate": 0.4612
+  }
+}

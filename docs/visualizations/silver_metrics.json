@@ -1,0 +1,1811 @@
+{
+  "size_distribution": {
+    "5x5": 100,
+    "8x8": 100,
+    "12x12": 100,
+    "other": 0
+  },
+  "complexities": [
+    {
+      "size": 12,
+      "complexity": 50,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 54,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 50,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 49,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 52,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 60,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 60,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 63,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 68,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 59,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 60,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 50,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 54,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 54,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 53,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 59,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 72,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 58,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 70,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 71,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 52,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 65,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 57,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 69,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 57,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 72,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 59,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 56,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 71,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 55,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 58,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 53,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 65,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 65,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 50,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 55,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 48,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 57,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 68,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 55,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 69,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 72,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 54,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 69,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 56,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 58,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 53,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 48,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 66,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 71,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 61,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 59,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 56,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 69,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 53,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 69,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 52,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 62,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 51,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 54,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 70,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 59,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 60,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 48,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 67,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 50,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 64,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 12,
+      "complexity": 71,
+      "subset": "nonogram_12x12",
+      "size_label": "12x12"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 10,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 11,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 5,
+      "complexity": 12,
+      "subset": "nonogram_5x5",
+      "size_label": "5x5"
+    },
+    {
+      "size": 8,
+      "complexity": 23,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 21,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 21,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 22,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 23,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 21,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 23,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 22,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 22,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 22,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 31,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 23,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 22,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 21,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 23,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 27,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 26,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 25,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 32,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 29,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 24,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 21,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 30,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    },
+    {
+      "size": 8,
+      "complexity": 28,
+      "subset": "nonogram_8x8",
+      "size_label": "8x8"
+    }
+  ],
+  "total_puzzles": 300
+}
