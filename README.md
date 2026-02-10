@@ -13,7 +13,7 @@
   </a>
 </div>
 
-### A model to solve nonograms
+### An Energy Based Model that solves nonograms
 
 <div align="center">
   <img src="./img/output.gif" alt="Grid Energy Solver Demo" width="380">
